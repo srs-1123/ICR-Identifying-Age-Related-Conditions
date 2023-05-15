@@ -7,8 +7,6 @@ assignees: ''
 
 ---
 
-# discussion名
-
 # URL
 
 # 内容

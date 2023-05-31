@@ -4,13 +4,15 @@
 -> 読んだdiscussionとかnotebookはIssuesに共有します
 * kaggleの日本人向けslack: <https://t.co/tylk3CY6nk>
 * EDA: <https://www.kaggle.com/code/ayushs9020/understanding-the-competition-icr-eda>
-* 今見てるnotebook(srs-1123): <https://www.kaggle.com/code/xb12345/improve-based-on-icr-first-version>
+* 決定木ベースモデル: <https://www.kaggle.com/code/xb12345/improve-based-on-icr-first-version>
+* ハイパーパラメータチューニング: <https://www.kaggle.com/code/tauilabdelilah/icr-hyperparameter-tuning-optuna>
 
 # 5/29～6/4
 ## srs-1123
-* 予測コード作成
-* 提出用コード作成
-* EDA
+- [x] tqdm消す
+- [x] 予測コード作成
+- [ ] 提出用コード作成
+- [ ] EDA
 ## wa
-* tabnet
-* light gbmハイパーパラメータチューニング
+- [ ] tabnet
+- [ ] light gbmハイパーパラメータチューニング

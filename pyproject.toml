@@ -15,6 +15,8 @@ dependencies = [
     "optuna~=3.2.0",
     "seaborn>=0.12.2",
     "pytorch_tabnet>=4.0",
+    "category_encoders>=2.6.1",
+    "imblearn>=0.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"

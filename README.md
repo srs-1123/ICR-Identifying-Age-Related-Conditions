@@ -6,18 +6,12 @@
 * EDA: <https://www.kaggle.com/code/ayushs9020/understanding-the-competition-icr-eda>
 * 決定木ベースモデル: <https://www.kaggle.com/code/xb12345/improve-based-on-icr-first-version>
 * ハイパーパラメータチューニング: <https://www.kaggle.com/code/tauilabdelilah/icr-hyperparameter-tuning-optuna>
-## srs-1123
-- [ ] チューニング済みlightgbm提出
-- [ ] 学習段階でbalanced_log_loss使った場合のモデル作成->提出
-- [ ] EDA
-- [ ] XGBoost, CatBoostでモデル作成
-## wa
-- [ ] tabnetで確率出力
-- [ ] balanced_log_lossで交差検証->提出
-- [ ] EDA
-- [ ] tabnet精度上げる
-- [ ] tabPFN
-## 提出スケジュール
-- [ ] wa tabnet
-- [ ] srs-1123 チューニング済みlightgbm
-- [ ] srs-1123 学習段階でbalanced_log_loss使った場合のモデル
+## やること
+* Epsilon考慮するかどうか
+* Alphaを予測
+* サンプリング方法
+* 前処理したデータで予測
+* xgboostのハイパーパラメータチューニング
+* 特徴量選択(xgboostのfeature importance)
+* アンサンブル
+* 予測が難しいデータ点をどう見分けるか

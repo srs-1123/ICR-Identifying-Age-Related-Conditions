@@ -7,11 +7,11 @@
 * 決定木ベースモデル: <https://www.kaggle.com/code/xb12345/improve-based-on-icr-first-version>
 * ハイパーパラメータチューニング: <https://www.kaggle.com/code/tauilabdelilah/icr-hyperparameter-tuning-optuna>
 ## やること
-* Epsilon考慮するかどうか
-* Alphaを予測
-* サンプリング方法
-* 前処理したデータで予測
-* xgboostのハイパーパラメータチューニング
-* 特徴量選択(xgboostのfeature importance)
-* アンサンブル
-* 予測が難しいデータ点をどう見分けるか
+- [ ] Epsilon考慮するかどうか
+- [ ] Alphaを予測
+- [ ] サンプリング方法
+- [ ] 前処理したデータで予測
+- [ ] xgboostのハイパーパラメータチューニング
+- [ ] 特徴量選択(xgboostのfeature importance)
+- [ ] アンサンブル
+- [ ] 予測が難しいデータ点をどう見分けるか

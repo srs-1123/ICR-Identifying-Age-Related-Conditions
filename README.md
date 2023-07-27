@@ -7,11 +7,17 @@
 * 決定木ベースモデル: <https://www.kaggle.com/code/xb12345/improve-based-on-icr-first-version>
 * ハイパーパラメータチューニング: <https://www.kaggle.com/code/tauilabdelilah/icr-hyperparameter-tuning-optuna>
 ## やること
-- [ ] Epsilon考慮するかどうか
-- [ ] Alphaを予測
-- [ ] サンプリング方法
-- [ ] 前処理したデータで予測
 - [x] xgboostのハイパーパラメータチューニング
 - [x] 特徴量選択(xgboostのfeature importance)
-- [ ] アンサンブル
+- [x] 前処理したデータで予測
+- [ ] preprocessed_xgboostで、waがやってた外れ値除去追加してLBスコアどれだけ変わるか
+- [ ] lightgbmのdartでハイパーパラメータチューニング（Optuna、特徴量はselect_k_bestで選ばれたもののみ使用）
+- [ ] select_k_bestで選ばれた特徴量と選ばれなかった特徴量のヒストグラムを作ってどんな傾向があるか確認
+- [ ] EDA.ipynbを参考に、相関の高い特徴量がselect_k_bestでどちらも選ばれてたらどちらか削除
+- [ ] preprocessed_xgboost.ipynbを、学習時にbalanced_log_lossを使う形に変更
+- [ ] preprocessed_lightgbm.ipynbを、lightgbmのdartを使う形に変更
+- [ ] Alphaを予測
+- [ ] サンプリング方法
+- [ ] Epsilon考慮するかどうか
 - [ ] 予測が難しいデータ点をどう見分けるか
+- [ ] アンサンブル

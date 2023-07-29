@@ -11,7 +11,7 @@
 - [x] 特徴量選択(xgboostのfeature importance)
 - [x] 前処理したデータで予測
 - [x] preprocessed_xgboostで、waがやってた外れ値除去追加してLBスコアどれだけ変わるか
-- [ ] lightgbmのdartでハイパーパラメータチューニング（Optuna、特徴量はselect_k_bestで選ばれたもののみ使用、時間かかるから早めに）
+- [x] lightgbmのdartでハイパーパラメータチューニング（Optuna、特徴量はselect_k_bestで選ばれたもののみ使用、時間かかるから早めに）
 - [ ] select_k_bestで選ばれた特徴量と選ばれなかった特徴量のヒストグラムを作ってどんな傾向があるか確認
 - [ ] EDA.ipynbを参考に、相関の高い特徴量がselect_k_bestでどちらも選ばれてたらどちらか削除
 - [ ] preprocessed_xgboost.ipynbを、学習時にbalanced_log_lossを使う形に変更

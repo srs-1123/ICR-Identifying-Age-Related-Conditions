@@ -14,7 +14,7 @@
 - [x] lightgbmのdartでハイパーパラメータチューニング（Optuna、特徴量はselect_k_bestで選ばれたもののみ使用、時間かかるから早めに）
 - [ ] select_k_bestで選ばれた特徴量と選ばれなかった特徴量のヒストグラムを作ってどんな傾向があるか確認
 - [ ] EDA.ipynbを参考に、相関の高い特徴量がselect_k_bestでどちらも選ばれてたらどちらか削除
-- [ ] preprocessed_xgboost.ipynbを、学習時にbalanced_log_lossを使う形に変更
+- [x] preprocessed_xgboost.ipynbを、学習時にbalanced_log_lossを使う形に変更
 - [ ] lightgbmのdart
 - [ ] 決定木ベースのモデルで、特徴量選択した後、欠損値処理、スケーリングは行わずに学習させる
 - [ ] Alphaを予測

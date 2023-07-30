@@ -4,7 +4,7 @@ from sklearn.metrics import log_loss
 from sklearn.model_selection import StratifiedKFold
 import optuna
 import warnings
-import lightgbm as lgb
+import xgboost as xgb
 from imblearn.over_sampling import SMOTE # SMOTE
 from sklearn.impute import KNNImputer # kNN Imputation
 from sklearn.feature_selection import SelectKBest, f_classif# Feature Selection
@@ -21,9 +21,6 @@ class CFG:
     n_folds = 5 # 公差検証の分割数
     seed = 1234
     learning_rate = 0.01
-    # light_gbm設定値
-    boosting_type = "dart"
-    verbose_eval = 0  # この数字を1にすると学習時のスコア推移がコマンドライン表示される
     
 class Preprocessing:
     '''前処理を行うクラス'''
@@ -167,7 +164,7 @@ def preprocessing_pipeline(train_df, test_df):
     preprocessor = Preprocessing(train_df, test_df)
     
     # 各メソッドを順に実行
-    # preprocessor.train_df, preprocessor.test_df = preprocessor.knn_imputer() # 欠損値代入
+    preprocessor.train_df, preprocessor.test_df = preprocessor.knn_imputer() # 欠損値代入
     # preprocessor.train_df, preprocessor.test_df = preprocessor.clip_outliers() # 外れ値除去
     # preprocessor.train_df, preprocessor.test_df = preprocessor.robust_scaler() # スケーリング
     preprocessor.train_df, preprocessor.test_df = preprocessor.select_k_best(pvalue_upper_limit = 0.1, fscore_lower_limit = 5) # 特徴量選択
@@ -200,61 +197,53 @@ def calc_log_loss_weight(y_true):
     return w0, w1
 
 def objective(trial):
-    # light-gbm設定値
-    lgb_params = {
+    # xgboost設定値
+    xgb_params = {
+        'objective': 'binary:logistic',# 学習タスク
+        'tree_method': 'gpu_hist',
+        'eval_metric': 'rmse',
+        'random_state': CFG.seed,
+        'learning_rate': CFG.learning_rate,
         # 探索するパラメータ
-        'verbosity': -1, # 学習途中の情報を表示するかどうか
-        "lambda_l1": trial.suggest_float("lambda_l1", 1e-8, 10.0, log=True),
-        "lambda_l2": trial.suggest_float("lambda_l2", 1e-8, 10.0, log=True),
-        "num_leaves": trial.suggest_int("num_leaves", 2, 256),
-        "feature_fraction": trial.suggest_float("feature_fraction", 0.2, 1.0),
-        "bagging_fraction": trial.suggest_float("bagging_fraction", 0.2, 1.0),
-        # "bagging_freq": trial.suggest_int("bagging_freq", 1, 7),
-        "min_child_samples": trial.suggest_int("min_child_samples", 5, 100),
-        
-        # 固定値
-        "boosting_type": CFG.boosting_type,
-        "objective": "binary",
-        "learning_rate": CFG.learning_rate,
-        "metric": "binary_logloss",
-        'seed': CFG.seed,
-        'n_jobs': -1, # -1でコア数をマックスで使う
-        'is_unbalance':True, # 不均衡データの場合にTrueにする
+        'max_depth': trial.suggest_int('max_depth', 1, 50),
+        'colsample_bytree': trial.suggest_uniform('colsample_bytree', 0.5, 1.0),
+        'subsample': trial.suggest_categorical('subsample', [0.4, 0.5, 0.6, 0.7, 0.8, 1.0]),
+        'gamma': trial.suggest_uniform('gamma', 0, 2),
+        'lambda': trial.suggest_loguniform('lambda', 1e-3, 10.0),
+        'min_child_weight': trial.suggest_int('min_child_weight', 1, 50),
     }
     
     scores = []
     # K-分割交差検証(層化抽出法)
     kfold = StratifiedKFold(n_splits = CFG.n_folds, shuffle = True, random_state = CFG.seed)
+    
     for fold, (train_index, valid_index) in enumerate(kfold.split(X_train, y_train)):
         # 訓練データを分割
         X_train_fold = X_train.iloc[train_index]
         y_train_fold = y_train.iloc[train_index]
         X_valid_fold = X_train.iloc[valid_index]
         y_valid_fold = y_train.iloc[valid_index]
-        
+    
         # 訓練データの重みを計算
         train_w0, train_w1 = calc_log_loss_weight(y_train_fold)
         # 検証データの重みを計算
         valid_w0, valid_w1 = calc_log_loss_weight(y_valid_fold)
-        # 訓練データをlgb用に変換
-        lgb_train = lgb.Dataset(X_train_fold, y_train_fold, weight=y_train_fold.map({0: train_w0, 1: train_w1}))
-        # lgb_train = lgb.Dataset(x_train, y_train, categorical_feature=categorical_features)
-        # 検証データをlgb用に変換
-        lgb_valid = lgb.Dataset(X_valid_fold, y_valid_fold, weight=y_valid_fold.map({0: valid_w0, 1: valid_w1}))
-        # lgb_valid = lgb.Dataset(x_valid, y_valid, categorical_feature=categorical_features)
+        # 訓練データをxgb用に変換
+        xgb_train = xgb.DMatrix(data=X_train_fold, label=y_train_fold, weight=y_train_fold.map({0: train_w0, 1: train_w1}))
+        # 検証データをxgb用に変換
+        xgb_valid = xgb.DMatrix(data=X_valid_fold, label=y_valid_fold, weight=y_valid_fold.map({0: valid_w0, 1: valid_w1}))
         
-        model = lgb.train(
-                    params = lgb_params,
-                    train_set = lgb_train,
-                    num_boost_round = CFG.num_boost_round,
-                    valid_sets = [lgb_train, lgb_valid],
-                    early_stopping_rounds = CFG.early_stopping_rounds,
-                    verbose_eval = CFG.verbose_eval,
-                    # 学習段階でbalanced_log_lossを使う場合はコメントアウト外す
-                    # feval = lgb_metric,
-                )
+        # モデルのインスタンス生成
+        model = xgb.train(
+            xgb_params, 
+            dtrain = xgb_train, 
+            num_boost_round = CFG.num_boost_round,
+            evals = [(xgb_train, 'train'), (xgb_valid, 'eval')], 
+            early_stopping_rounds = CFG.early_stopping_rounds,
+            verbose_eval = False, # 整数に設定すると、n回ごとのブースティングステージで評価メトリクスを表示
+        )
         # 予測
-        preds = model.predict(X_valid_fold)
+        preds = model.predict(xgb.DMatrix(X_valid_fold), iteration_range=(0, model.best_ntree_limit))
         # 予測値をラベルに変換
         # pred_labels = np.rint(preds)
         # 評価

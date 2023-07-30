@@ -17,8 +17,8 @@
 - [x] preprocessed_xgboost.ipynbを、学習時にbalanced_log_lossを使う形に変更
 - [x] lightgbmのdart
 - [x] 決定木ベースのモデルで、特徴量選択した後、欠損値処理、スケーリングは行わずに学習させる
-- [ ] Alphaを予測
+- [x] Alphaを予測
 - [ ] サンプリング方法
-- [ ] Epsilon考慮するかどうか
+- [x] Epsilon考慮するかどうか
 - [ ] 予測が難しいデータ点をどう見分けるか
 - [ ] アンサンブル
